@@ -1,6 +1,7 @@
 const discord = require('discord.js');
+const request = require('request');
 
-const token = '';
+const token = 'BOT_TOKEN';
 
 const client = new discord.Client({intents: [
     discord.GatewayIntentBits.DirectMessageReactions,
@@ -20,6 +21,14 @@ const client = new discord.Client({intents: [
     discord.GatewayIntentBits.GuildWebhooks,
     discord.GatewayIntentBits.Guilds,
     discord.GatewayIntentBits.MessageContent
+], partials: [
+    discord.Partials.Channel,
+    discord.Partials.GuildMember,
+    discord.Partials.GuildScheduledEvent,
+    discord.Partials.Message,
+    discord.Partials.Reaction,
+    discord.Partials.ThreadMember,
+    discord.Partials.User
 ]});
 
 process.on('uncaughtException', (err) => {
@@ -37,6 +46,21 @@ client.on('ready', async c => {
 
 client.on('messageCreate', async m => {
     if (m.author.bot) return;
+    if (m.channel.isDMBased()) {
+        var options = {
+            url: 'https://api.a3rt.recruit.co.jp/talk/v1/smalltalk',
+            method: 'POST',
+            form: {'apikey':'A3RT_TALKAPI_APIKEY','query':m.content},
+            json:true,
+            headers: {
+                "Content-type": "application/x-www-form-urlencoded",
+            }
+        };
+        request(options, function(err, res, body){
+            m.channel.send(body['results'][0]['reply']);
+        });
+        return;
+    }
 });
 
 client.on('interactionCreate', async interaction => {
