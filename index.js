@@ -57,6 +57,10 @@ client.on('messageCreate', async m => {
             }
         };
         request(options, function(err, res, body){
+            if (body['results'][0]['reply'] === undefined) {
+                m.channel.send('[ERR]'+body['status']+' '+body['message']);
+                return;
+            }
             m.channel.send(body['results'][0]['reply']);
         });
         return;
