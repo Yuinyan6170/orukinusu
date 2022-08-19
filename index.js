@@ -42,7 +42,11 @@ client.on('ready', async c => {
     client.guilds.cache.forEach(async (key, value) => {
         await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 1.1.0'}]});
+    client.user.setPresence({activities:[{name:'now version 1.1.1'}]});
+    client.channels.fetch('1008973466772439120')
+    .then(channel => {
+        channel.send('起動しました。\nversion 1.1.1');
+    });
 });
 
 client.on('messageCreate', async m => {
