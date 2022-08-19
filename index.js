@@ -55,10 +55,10 @@ client.on('ready', async c => {
     client.guilds.cache.forEach(async (key, value) => {
         await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}, {name:'random_name', description:'名前をぐちゃぐちゃにします'}], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 2.0.1'}]});
+    client.user.setPresence({activities:[{name:'now version 2.0.2'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 2.0.1');
+        channel.send('起動しました。\nversion 2.0.2');
     });
 });
 
@@ -88,7 +88,18 @@ client.on('messageCreate', async m => {
 client.on('interactionCreate', async interaction => {
     if (interaction.isCommand()) {
         if (interaction.commandName === 'omikuji') {
-            var omikuji_list = [['大吉！', 'いいことあるかも！'],['中吉！', 'いいじゃん！今日も頑張ろ！'], ['小吉','悪くはないよ！'], ['吉', '普通、、、かな？'], ['末吉', '(´・ω・｀)'], ['凶', 'まだまだ巻き返せる！'], ['鯖吉！', 'こりゃまた磯の匂いがしますなぁ\nところでさばちゃ副官おめでとう！'], ['しお吉！', '大当たりやなぁ！\n今日はいい日になるでぇー'], ['ヨル吉！', '頼れるヨルムや！\n今日は絶対いい事あります！'], ['すこ吉！', '面白いすこたろが出てきたなぁ\nあれ、ろたこすだったっけ？']];
+            var omikuji_list = [
+                ['大吉！', 'いいことあるかも！'],
+                ['中吉！', 'いいじゃん！今日も頑張ろ！'],
+                ['小吉','悪くはないよ！'],
+                ['吉', '普通、、、かな？'],
+                ['末吉', '(´・ω・｀)'],
+                ['凶', 'まだまだ巻き返せる！'],
+                ['鯖吉！', 'こりゃまた磯の匂いがしますなぁ\nところでさばちゃ副官おめでとう！'],
+                ['しお吉！', '大当たりやなぁ！\n今日はいい日になるでぇー'],
+                ['ヨル吉！', '頼れるヨルムや！\n今日は絶対いい事あります！'],
+                ['すこ吉！', '面白いすこたろが出てきたなぁ\nあれ、ろたこすだったっけ？']
+            ];
             var max = omikuji_list.length;
             var min = 0;
             var num = Math.floor(Math.random() * (max - min)) + min;
