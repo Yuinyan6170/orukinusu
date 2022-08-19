@@ -31,6 +31,19 @@ const client = new discord.Client({intents: [
     discord.Partials.User
 ]});
 
+function shuffle(text) {
+    let obj = {};
+    for (let i = 0; i < text.length; i++) {
+        let rand = Math.floor(Math.random() * 10000000);
+        if (!obj[rand]) {
+            obj[rand] = text[i];
+        } else {
+            i--;
+        }
+    }
+    return Object.values(obj).join('');
+}
+
 process.on('uncaughtException', (err) => {
     client.channels.fetch('1008973466772439120')
     .then(channel => {
@@ -40,12 +53,12 @@ process.on('uncaughtException', (err) => {
 
 client.on('ready', async c => {
     client.guilds.cache.forEach(async (key, value) => {
-        await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}], value.id);
+        await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}, {name:'random_name', description:'名前をぐちゃぐちゃにします'}], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 1.1.1'}]});
+    client.user.setPresence({activities:[{name:'now version 2.0.0'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 1.1.1');
+        channel.send('起動しました。\nversion 2.0.0');
     });
 });
 
@@ -80,6 +93,14 @@ client.on('interactionCreate', async interaction => {
             var min = 0;
             var num = Math.floor(Math.random() * (max - min)) + min;
             await interaction.reply({content: 'ガラガラっ、、！', embeds: [{title:omikuji_list[num][0], description:omikuji_list[num][1]}], ephemeral: false});
+            return;
+        }
+        if (interaction.commandName === 'random_name') {
+            var before = interaction.member.nickname;
+            if (before === null) {
+                before = interaction.member.user.username;
+            }
+            interaction.member.edit({nick: shuffle(before)});
         }
     }
 });
