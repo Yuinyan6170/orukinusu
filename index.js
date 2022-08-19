@@ -55,10 +55,10 @@ client.on('ready', async c => {
     client.guilds.cache.forEach(async (key, value) => {
         await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}, {name:'random_name', description:'名前をぐちゃぐちゃにします'}], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 2.0.0'}]});
+    client.user.setPresence({activities:[{name:'now version 2.0.1'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 2.0.0');
+        channel.send('起動しました。\nversion 2.0.1');
     });
 });
 
@@ -101,6 +101,8 @@ client.on('interactionCreate', async interaction => {
                 before = interaction.member.user.username;
             }
             interaction.member.edit({nick: shuffle(before)});
+            await interaction.reply({content: '処理が終了しました', ephemeral: false});
+            return;
         }
     }
 });
