@@ -1,5 +1,8 @@
+const { joinVoiceChannel, AudioPlayer, AudioResource, createAudioResource, createAudioPlayer } = require('@discordjs/voice');
 const discord = require('discord.js');
 const request = require('request');
+const {createReadStream} = require('node:fs');
+const { join } = require('node:path');
 
 const token = 'BOT_TOKEN';
 
@@ -53,12 +56,12 @@ process.on('uncaughtException', (err) => {
 
 client.on('ready', async c => {
     client.guilds.cache.forEach(async (key, value) => {
-        await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}, {name:'random_name', description:'名前をぐちゃぐちゃにします'}], value.id);
+        await client.application.commands.set([{name: 'omikuji', description: 'おみくじを引きます\n隠し要素も！？'}, {name:'random_name', description:'名前をぐちゃぐちゃにします'}, {name:'test', description:'テストコマンドです'}], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 2.0.2'}]});
+    client.user.setPresence({activities:[{name:'now version 2.1.2'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 2.0.2');
+        channel.send('起動しました。\nversion 2.1.2');
     });
 });
 
@@ -114,6 +117,23 @@ client.on('interactionCreate', async interaction => {
             interaction.member.edit({nick: shuffle(before)});
             await interaction.reply({content: '処理が終了しました', ephemeral: false});
             return;
+        }
+        if (interaction.commandName === 'test') {
+            const connection = joinVoiceChannel({
+                channelId: interaction.member.voice.channel.id,
+                guildId: interaction.member.guild.id,
+                adapterCreator: interaction.member.guild.voiceAdapterCreator
+            });
+            var player = createAudioPlayer();
+            var res = createAudioResource(createReadStream(join(__dirname + '/test.mp3')), { inlineVolume: true });
+            connection.subscribe(player);
+            player.addListener('stateChange', (oldone, newone) => {
+                if (newone.status === 'idle') {
+                    connection.destroy();
+                }
+            });
+            player.play(res);
+            interaction.reply({content:'test finished',ephemeral:false});
         }
     }
 });
