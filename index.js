@@ -7,7 +7,8 @@ const path = require('path');
 const fs = require('fs');
 const {exec} = require('child_process');
 const youtubeMp3Converter = require('youtube-mp3-converter');
-const { channelId, videoId } = require('@gonetone/get-youtube-id-by-url')
+const { channelId, videoId } = require('@gonetone/get-youtube-id-by-url');
+const { ChannelType } = require('discord.js');
 
 const token = 'BOT_TOKEN';
 
@@ -75,10 +76,10 @@ client.on('ready', async c => {
             {name:'skip', description:'曲をスキップします'}
             ], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 3.3.5'}]});
+    client.user.setPresence({activities:[{name:'now version 3.4.0'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 3.3.5');
+        channel.send('起動しました。\nversion 3.4.0');
     });
 });
 
@@ -269,6 +270,18 @@ client.on('interactionCreate', async interaction => {
                 interaction.channel.send('now play ' + url);
             }, 5000);
         }
+    }
+});
+
+client.on('voiceStateUpdate', async (oldone, newone) => {
+    if (oldone.channel === null && newone.channel !== null && newone.channel.id === '1010868113069330463') {
+        var channel = await newone.guild.channels.create({
+            name: newone.member.user.username + 'のチャンネル',
+            type: ChannelType.GuildVoice
+        });
+        newone.member.voice.setChannel(channel);
+    } else if (oldone.channel !== null && newone.channel === null && oldone.channel.id !== '927507376905551876' && oldone.channel.id !== '1010868113069330463' && oldone.channel.id !== '944787583836225556' && oldone.channel.members.size === 0) {
+        oldone.channel.delete();
     }
 });
 
