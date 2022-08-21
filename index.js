@@ -75,10 +75,10 @@ client.on('ready', async c => {
             {name:'skip', description:'曲をスキップします'}
             ], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 3.3.3'}]});
+    client.user.setPresence({activities:[{name:'now version 3.3.4'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 3.3.3');
+        channel.send('起動しました。\nversion 3.3.4');
     });
 });
 
@@ -180,7 +180,7 @@ client.on('interactionCreate', async interaction => {
             return;
         }
         if (interaction.commandName === 'youtube') {
-            if (interaction.options.getString('youtube_id') === null) {
+            if (interaction.options.getString('youtube_url') === null) {
                 var str = '';
                 for (let i = 0;i<queue[interaction.guild.id].length;i++) {
                     str += 'https://www.youtube.com/watch?v=' + queue[interaction.guild.id][i] + '\n';
