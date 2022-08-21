@@ -73,7 +73,8 @@ client.on('ready', async c => {
             {name:'pause', description:'曲を止めます'},
             {name:'unpause', description:'曲を再開します'},
             {name:'youtube', description:'youtubeから音楽を流します\nオプションなしで実行するとキューの中身を表示します', options:[{type:3, name:'youtube_url', description:'youtubeの動画のURLです'}]},
-            {name:'skip', description:'曲をスキップします'}
+            {name:'skip', description:'曲をスキップします'},
+            {name: 'rename_vc', description: 'VC作成で作ったVCに参加しながら使用するとVCの名前を変えられます', options: [{type: 3, name: 'vc_name', description: 'VCの名前'}]}
             ], value.id);
     });
     client.user.setPresence({activities:[{name:'now version 3.5.1'}]});
@@ -269,6 +270,13 @@ client.on('interactionCreate', async interaction => {
                 players[interaction.guild.id].play(res);
                 interaction.channel.send('now play ' + url);
             }, 5000);
+        }
+        if (interaction.commandName === 'rename_vc' && interaction.options.getString('vc_name') !== null) {
+            if (interaction.member.voice.channel.id === '944787583836225556' || interaction.member.voice.channel.id === '927507376905551876' || interaction.member.voice.channel.id === '1010868113069330463') return;
+            var name = interaction.options.getString('vc_name');
+            interaction.member.voice.channel.edit({name: name});
+            interaction.reply({content: '変更しました', ephemeral: false});
+            return;
         }
     }
 });
