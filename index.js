@@ -7,8 +7,8 @@ const path = require('path');
 const fs = require('fs');
 const {exec} = require('child_process');
 const youtubeMp3Converter = require('youtube-mp3-converter');
-const { channelId, videoId } = require('@gonetone/get-youtube-id-by-url');
 const { ChannelType } = require('discord.js');
+const getYouTubeID = require('get-youtube-id');
 
 const token = 'BOT_TOKEN';
 
@@ -73,8 +73,7 @@ client.on('ready', async c => {
             {name:'pause', description:'曲を止めます'},
             {name:'unpause', description:'曲を再開します'},
             {name:'youtube', description:'youtubeから音楽を流します\nオプションなしで実行するとキューの中身を表示します', options:[{type:3, name:'youtube_url', description:'youtubeの動画のURLです'}]},
-            {name:'skip', description:'曲をスキップします'},
-            {name: 'rename_vc', description: 'VC作成で作ったVCに参加しながら使用するとVCの名前を変えられます', options: [{type: 3, name: 'vc_name', description: 'VCの名前'}]}
+            {name:'skip', description:'曲をスキップします'}
             ], value.id);
     });
     client.user.setPresence({activities:[{name:'now version 3.5.1'}]});
@@ -191,7 +190,7 @@ client.on('interactionCreate', async interaction => {
                 return;
             }
             var YOUTUBE_ID = interaction.options.getString('youtube_url');
-            YOUTUBE_ID = await videoId(YOUTUBE_ID);
+            YOUTUBE_ID = getYouTubeID(YOUTUBE_ID, {fuzzy: false});
             if (queue[interaction.guild.id] === undefined) {
                 queue[interaction.guild.id] = [];
             }
@@ -270,14 +269,6 @@ client.on('interactionCreate', async interaction => {
                 players[interaction.guild.id].play(res);
                 interaction.channel.send('now play ' + url);
             }, 5000);
-            return;
-        }
-        if (interaction.commandName === 'rename_vc' && interaction.options.getString('vc_name') !== null) {
-            if (interaction.member.voice.channel.id === '944787583836225556' || interaction.member.voice.channel.id === '927507376905551876' || interaction.member.voice.channel.id === '1010868113069330463') return;
-            var name = interaction.options.getString('vc_name');
-            interaction.member.voice.channel.edit({name: name});
-            interaction.reply({content: '変更しました', ephemeral: false});
-            return;
         }
     }
 });
