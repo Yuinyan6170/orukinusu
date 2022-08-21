@@ -77,10 +77,10 @@ client.on('ready', async c => {
             {name: 'rename_vc', description: 'VC作成で作ったVCに参加しながら使用するとVCの名前を変えられます', options: [{type: 3, name: 'vc_name', description: 'VCの名前'}]}
             ], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 3.5.0'}]});
+    client.user.setPresence({activities:[{name:'now version 3.5.1'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 3.5.0');
+        channel.send('起動しました。\nversion 3.5.1');
     });
 });
 
@@ -273,6 +273,7 @@ client.on('interactionCreate', async interaction => {
             return;
         }
         if (interaction.commandName === 'rename_vc' && interaction.options.getString('vc_name') !== null) {
+            if (interaction.member.voice.channel.id === '944787583836225556' || interaction.member.voice.channel.id === '927507376905551876' || interaction.member.voice.channel.id === '1010868113069330463') return;
             var name = interaction.options.getString('vc_name');
             interaction.member.voice.channel.edit({name: name});
             interaction.reply({content: '変更しました', ephemeral: false});
