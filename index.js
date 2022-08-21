@@ -75,10 +75,10 @@ client.on('ready', async c => {
             {name:'skip', description:'曲をスキップします'}
             ], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 3.3.4'}]});
+    client.user.setPresence({activities:[{name:'now version 3.3.5'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 3.3.4');
+        channel.send('起動しました。\nversion 3.3.5');
     });
 });
 
@@ -188,7 +188,7 @@ client.on('interactionCreate', async interaction => {
                 interaction.reply({content:str, ephemeral:false});
                 return;
             }
-            var YOUTUBE_ID = interaction.options.getString('youtube_id');
+            var YOUTUBE_ID = interaction.options.getString('youtube_url');
             YOUTUBE_ID = await videoId(YOUTUBE_ID);
             if (queue[interaction.guild.id] === undefined) {
                 queue[interaction.guild.id] = [];
