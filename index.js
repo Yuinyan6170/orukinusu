@@ -2,13 +2,17 @@ const { joinVoiceChannel, AudioPlayer, AudioResource, createAudioResource, creat
 const discord = require('discord.js');
 const request = require('request');
 const {createReadStream} = require('node:fs');
-const { join } = require('node:path');
+const { join, resolve } = require('node:path');
 const path = require('path');
 const fs = require('fs');
 const {exec} = require('child_process');
 const youtubeMp3Converter = require('youtube-mp3-converter');
 const { ChannelType } = require('discord.js');
 const getYouTubeID = require('get-youtube-id');
+const usetube = require('usetube');
+const getYotubePlaylistId = require('get-youtube-playlist-id');
+const yve = require('youtube-video-exists');
+const asy = require('async');
 
 const token = 'BOT_TOKEN';
 
@@ -77,10 +81,10 @@ client.on('ready', async c => {
             {name: 'rename_vc', description: 'VC作成で作ったVCに参加しながら使用するとVCの名前を変えられます', options: [{type: 3, name: 'vc_name', description: 'VCの名前'}]}
             ], value.id);
     });
-    client.user.setPresence({activities:[{name:'now version 3.5.1'}]});
+    client.user.setPresence({activities:[{name:'now version 3.6.2'}]});
     client.channels.fetch('1008973466772439120')
     .then(channel => {
-        channel.send('起動しました。\nversion 3.5.1');
+        channel.send('起動しました。\nversion 3.6.2');
     });
 });
 
@@ -184,20 +188,37 @@ client.on('interactionCreate', async interaction => {
         if (interaction.commandName === 'youtube') {
             if (interaction.options.getString('youtube_url') === null) {
                 var str = '';
+                var count = 0;
                 for (let i = 0;i<queue[interaction.guild.id].length;i++) {
+                    count += 1;
+                    if (count === 11) {
+                        break;
+                    }
                     str += 'https://www.youtube.com/watch?v=' + queue[interaction.guild.id][i] + '\n';
                 }
                 interaction.reply({content:str, ephemeral:false});
                 return;
             }
-            var YOUTUBE_ID = interaction.options.getString('youtube_url');
-            YOUTUBE_ID = getYouTubeID(YOUTUBE_ID, {fuzzy: false});
             if (queue[interaction.guild.id] === undefined) {
                 queue[interaction.guild.id] = [];
             }
-            queue[interaction.guild.id].push(YOUTUBE_ID);
-            interaction.reply({content:'追加しました', ephemeral:false});
-            if (queue[interaction.guild.id].length === 1) {
+            var URL = interaction.options.getString('youtube_url');
+            var YOUTUBE_ID = getYouTubeID(URL, {fuzzy: false});
+            if (YOUTUBE_ID === null) {
+                interaction.reply({content: '追加しています', ephemeral: false});
+                var playlistid = getYotubePlaylistId(URL)
+                var playlist = await usetube.getPlaylistVideos(playlistid);
+                await asy.each(playlist, async function (item) {
+                    var _info = await yve.getVideoInfo(item.id);
+                    if (_info.existing) {
+                        queue[interaction.guild.id].push(item.id);
+                    }
+                });
+            } else {
+                queue[interaction.guild.id].push(YOUTUBE_ID);
+                interaction.reply({content:'追加しました', ephemeral:false});
+            }
+            if (players[interaction.guild.id] === undefined) {
                 const connection = joinVoiceChannel({
                     channelId: interaction.member.voice.channel.id,
                     guildId: interaction.member.guild.id,
